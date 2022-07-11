@@ -8061,11 +8061,8 @@ function md5FileSync (path) {
 function md5File (path) {
   return new Promise((resolve, reject) => {
     const output = crypto.createHash('md5')
-    const f = fs.existsSync(path);
-
     const input = fs.createReadStream(path)
-    const x = fs.readdirSync('./');
-    console.log({input, path, f, x})
+
     input.on('error', (err) => {
       reject(err)
     })
