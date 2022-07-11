@@ -1,4 +1,4 @@
-name: 'Upload a Release Asset'
+name: 'Upload a Release Asset with MD5'
 description: 'Upload a release asset to an existing release in your repository'
 author: 'GitHub'
 inputs:
