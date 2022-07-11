@@ -1,9 +1,11 @@
 const core = require('@actions/core');
 const { GitHub } = require('@actions/github');
 const fs = require('fs');
+const md5File = require('md5-file');
 
 async function run() {
   try {
+    console.log('startiing');
     // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
     const github = new GitHub(process.env.GITHUB_TOKEN);
 
@@ -28,7 +30,7 @@ async function run() {
       name: assetName,
       file: fs.readFileSync(assetPath)
     });
-
+    const fileMD5 = await md5File(assetPath);
     // Get the browser_download_url for the uploaded release asset from the response
     const {
       data: { browser_download_url: browserDownloadUrl }
@@ -36,6 +38,7 @@ async function run() {
 
     // Set the output variable for use by other actions: https://github.com/actions/toolkit/tree/master/packages/core#inputsoutputs
     core.setOutput('browser_download_url', browserDownloadUrl);
+    core.setOutput('file_md5', fileMD5);
   } catch (error) {
     core.setFailed(error.message);
   }

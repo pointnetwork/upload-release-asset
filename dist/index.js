@@ -4116,9 +4116,11 @@ function octokitDebug (octokit) {
 const core = __webpack_require__(470);
 const { GitHub } = __webpack_require__(469);
 const fs = __webpack_require__(747);
+const md5File = __webpack_require__(813);
 
 async function run() {
   try {
+    console.log('startiing');
     // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
     const github = new GitHub(process.env.GITHUB_TOKEN);
 
@@ -4143,7 +4145,7 @@ async function run() {
       name: assetName,
       file: fs.readFileSync(assetPath)
     });
-
+    const fileMD5 = await md5File(assetPath);
     // Get the browser_download_url for the uploaded release asset from the response
     const {
       data: { browser_download_url: browserDownloadUrl }
@@ -4151,6 +4153,7 @@ async function run() {
 
     // Set the output variable for use by other actions: https://github.com/actions/toolkit/tree/master/packages/core#inputsoutputs
     core.setOutput('browser_download_url', browserDownloadUrl);
+    core.setOutput('file_md5', fileMD5);
   } catch (error) {
     core.setFailed(error.message);
   }
@@ -4623,6 +4626,13 @@ function Octokit (plugins, options) {
 /***/ (function(module) {
 
 module.exports = require("stream");
+
+/***/ }),
+
+/***/ 417:
+/***/ (function(module) {
+
+module.exports = require("crypto");
 
 /***/ }),
 
@@ -8017,6 +8027,59 @@ function gather (octokit, results, iterator, mapFn) {
       return gather(octokit, results, iterator, mapFn)
     })
 }
+
+
+/***/ }),
+
+/***/ 813:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+const crypto = __webpack_require__(417)
+const fs = __webpack_require__(747)
+
+const BUFFER_SIZE = 8192
+
+function md5FileSync (path) {
+  const fd = fs.openSync(path, 'r')
+  const hash = crypto.createHash('md5')
+  const buffer = Buffer.alloc(BUFFER_SIZE)
+
+  try {
+    let bytesRead
+
+    do {
+      bytesRead = fs.readSync(fd, buffer, 0, BUFFER_SIZE)
+      hash.update(buffer.slice(0, bytesRead))
+    } while (bytesRead === BUFFER_SIZE)
+  } finally {
+    fs.closeSync(fd)
+  }
+
+  return hash.digest('hex')
+}
+
+function md5File (path) {
+  return new Promise((resolve, reject) => {
+    const output = crypto.createHash('md5')
+    const f = fs.existsSync(path);
+
+    const input = fs.createReadStream(path)
+    const x = fs.readdirSync('./');
+    console.log({input, path, f, x})
+    input.on('error', (err) => {
+      reject(err)
+    })
+
+    output.once('readable', () => {
+      resolve(output.read().toString('hex'))
+    })
+
+    input.pipe(output)
+  })
+}
+
+module.exports = md5File
+module.exports.sync = md5FileSync
 
 
 /***/ }),

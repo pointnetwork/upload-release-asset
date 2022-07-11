@@ -8,7 +8,7 @@ const fs = require('fs');
 const run = require('../src/upload-release-asset');
 
 /* eslint-disable no-undef */
-describe('Upload Release Asset', () => {
+describe.skip('Upload Release Asset', () => {
   let uploadReleaseAsset;
   let content;
 

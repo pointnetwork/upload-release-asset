@@ -16,7 +16,8 @@
         "singleQuote": true,
         "printWidth": 120
       }
-    ]
+    ],
+    "no-console": "off"
   },
   "plugins": [
     "prettier"
