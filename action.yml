@@ -1,4 +1,4 @@
-name: 'Upload a Release Asset with MD5 calculations'
+name: 'Upload a Release Asset with SHA-256 calculations'
 description: 'Upload a release asset to an existing release in your repository'
 author: 'GitHub'
 inputs:
@@ -17,8 +17,10 @@ inputs:
 outputs:
   browser_download_url:
     description: 'The URL users can navigate to in order to download the uploaded asset'
-  file_md5:
-    description: 'Provides md5 for the uploaded file'
+  asset_hash:
+    description: 'Provides SHA-256 for the uploaded file'
+  asset_name:
+    description: 'The name of the uploaded asset'
 runs:
   using: 'node12'
   main: 'dist/index.js'

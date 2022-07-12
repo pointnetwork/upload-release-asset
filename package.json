@@ -1,5 +1,5 @@
 {
-  "name": "upload-release-asset-with-md5",
+  "name": "upload-release-asset",
   "version": "1.0.0",
   "private": true,
   "description": "Upload a release asset to an existing GitHub Release",
@@ -23,8 +23,7 @@
   "dependencies": {
     "@actions/core": "^1.0.0",
     "@actions/exec": "^1.0.0",
-    "@actions/github": "^1.0.0",
-    "md5-file": "^5.0.0"
+    "@actions/github": "^1.0.0"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.20.4",

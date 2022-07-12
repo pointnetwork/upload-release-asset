@@ -1,7 +1,7 @@
 const core = require('@actions/core');
 const { GitHub } = require('@actions/github');
 const fs = require('fs');
-const md5File = require('md5-file');
+const crypto = require('crypto');
 
 async function run() {
   try {
@@ -23,13 +23,18 @@ async function run() {
     // Upload a release asset
     // API Documentation: https://developer.github.com/v3/repos/releases/#upload-a-release-asset
     // Octokit Documentation: https://octokit.github.io/rest.js/#octokit-routes-repos-upload-release-asset
+    const fileBuffer = fs.readFileSync(assetPath);
+
     const uploadAssetResponse = await github.repos.uploadReleaseAsset({
       url: uploadUrl,
       headers,
       name: assetName,
-      file: fs.readFileSync(assetPath)
+      file: fileBuffer
     });
-    const fileMD5 = await md5File(assetPath);
+
+    const hashSum = crypto.createHash('sha256');
+    hashSum.update(fileBuffer);
+    const fileHash = hashSum.digest('hex');
     // Get the browser_download_url for the uploaded release asset from the response
     const {
       data: { browser_download_url: browserDownloadUrl }
@@ -37,7 +42,8 @@ async function run() {
 
     // Set the output variable for use by other actions: https://github.com/actions/toolkit/tree/master/packages/core#inputsoutputs
     core.setOutput('browser_download_url', browserDownloadUrl);
-    core.setOutput('file_md5', fileMD5);
+    core.setOutput('asset_hash', fileHash);
+    core.setOutput('asset_name', assetName);
   } catch (error) {
     core.setFailed(error.message);
   }
