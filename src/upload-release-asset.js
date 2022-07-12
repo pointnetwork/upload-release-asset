@@ -5,7 +5,6 @@ const md5File = require('md5-file');
 
 async function run() {
   try {
-    console.log('startiing');
     // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
     const github = new GitHub(process.env.GITHUB_TOKEN);
 

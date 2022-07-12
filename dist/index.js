@@ -4120,7 +4120,6 @@ const md5File = __webpack_require__(813);
 
 async function run() {
   try {
-    console.log('startiing');
     // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
     const github = new GitHub(process.env.GITHUB_TOKEN);
 
@@ -8061,11 +8060,8 @@ function md5FileSync (path) {
 function md5File (path) {
   return new Promise((resolve, reject) => {
     const output = crypto.createHash('md5')
-    const f = fs.existsSync(path);
-
     const input = fs.createReadStream(path)
-    const x = fs.readdirSync('./');
-    console.log({input, path, f, x})
+
     input.on('error', (err) => {
       reject(err)
     })
